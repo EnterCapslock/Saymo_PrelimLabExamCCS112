@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['inventory'])) {
-    $_SESSION['inventory'] = array();
+    $_SESSION['inventory'] = [];
 }
 
 if (!isset($_SESSION['result'])) {
@@ -11,6 +11,7 @@ if (!isset($_SESSION['result'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search'])) {
     $searchName = trim($_POST['search']);
+
     if (isExist($searchName)) {
         $_SESSION['result'] = "<li>" . htmlspecialchars($searchName) . ": " . htmlspecialchars($_SESSION['inventory'][$searchName]) . "</li>";
     } else {
@@ -23,6 +24,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['search'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["addItem"])) {
     $itemName = trim($_POST["inputName"]);
     $quantity = (int)$_POST["quantity"];
+    
+    if ($itemName === "") {
+        $_SESSION['result'] = "<li>Item name is blank.</li>";
+        header("Location: index.php");
+        exit;
+    }
 
     if (!isExist($itemName) && $quantity > 0) {
         $_SESSION['inventory'][$itemName] = $quantity;
